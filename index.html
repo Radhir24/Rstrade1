@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RK Gold AI Scalper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-icon">RK</div><div><b>RK GOLD</b><small>AI SCALPER</small></div></div>
+    <div class="nav-label">WORKSPACE</div>
+    <a class="nav active" href="#overview">▦ <span>Overview</span></a>
+    <a class="nav" href="#chart">◫ <span>Live chart</span></a>
+    <a class="nav" href="#journal">▤ <span>Trade journal</span></a>
+    <a class="nav" href="#research">◉ <span>News & AI research</span></a>
+    <div class="side-bottom"><span class="dot"></span> PAPER MODE ONLY <small>No broker connected</small></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><div class="eyebrow">MARKET WORKSPACE / GOLD</div><h1>Gold scalping terminal</h1></div><div class="top-right"><span class="pill"><i class="dot"></i> DEMO SIMULATION</span><span id="clock" class="clock">--:--:--</span></div></header>
+    <section class="risk-banner"><b>Risk notice</b><span>Your requested +$0.10 TP / -$0.90 SL risks 9× the target reward per trade, before spread and costs. Daily target is a tracker, not a promise.</span></section>
+    <section class="metrics" id="overview">
+      <div class="metric"><label>SIMULATED BALANCE</label><div class="metric-value" id="balanceValue">$50.00</div><button class="text-btn" id="editBalance">Edit balance ↗</button></div>
+      <div class="metric"><label>TODAY'S P&amp;L</label><div class="metric-value" id="dailyPnl">$0.00</div><small id="dailyCount">0 closed trades today</small></div>
+      <div class="metric"><label>WIN RATE</label><div class="metric-value" id="winRate">—</div><small id="winCount">No closed trades yet</small></div>
+      <div class="metric"><label>DAILY TARGET</label><div class="metric-value">$100.00</div><div class="progress"><span id="targetProgress"></span></div><small id="targetLabel">0% of target</small></div>
+    </section>
+    <section class="grid-main" id="chart">
+      <div class="panel chart-panel">
+        <div class="panel-head"><div><div class="eyebrow">TRADINGVIEW · XAUUSD</div><h2>Gold / US Dollar</h2></div><span class="live-tag">CHART EMBED</span></div>
+        <div class="tv-wrap"><div class="tradingview-widget-container"><div id="tradingview_chart"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+        <script>
+        if (window.TradingView) new TradingView.widget({
+          autosize:true, symbol:"OANDA:XAUUSD", interval:"1", timezone:"Asia/Kolkata",
+          theme:"dark", style:"1", locale:"en", enable_publishing:false,
+          hide_top_toolbar:false, hide_legend:false, save_image:false,
+          container_id:"tradingview_chart", allow_symbol_change:true
+        });
+        </script></div></div>
+        <div class="chart-foot"><span>TradingView chart display · feed access is separate</span><span id="feedStatus">Market data: not configured</span></div>
+      </div>
+      <div class="panel signal-panel">
+        <div class="panel-head"><div><div class="eyebrow">RULE-BASED ENGINE</div><h2>Signal monitor</h2></div><span class="tag">SMA 4 / 6</span></div>
+        <div class="signal-big" id="signalSide">WAIT</div><div class="signal-sub" id="signalReason">Connect market data to calculate signals.</div>
+        <div class="signal-row"><span>1H context</span><b id="hourBias">—</b></div>
+        <div class="signal-row"><span>1M crossover</span><b id="minuteCross">—</b></div>
+        <div class="signal-row"><span>Liquidity wick heuristic</span><b id="liquidityFlag">—</b></div>
+        <div class="signal-row"><span>Signal strength</span><b id="signalStrength">—</b></div>
+        <button class="btn primary full" id="refreshAnalysis">Refresh analysis</button>
+        <div class="tiny">Signals are educational estimates, not recommendations. Candle data requires a configured provider.</div>
+      </div>
+    </section>
+    <section class="grid-lower">
+      <div class="panel">
+        <div class="panel-head"><div><div class="eyebrow">PAPER EXECUTION</div><h2>Bot controls</h2></div><span class="pill"><i class="dot"></i> SIMULATED</span></div>
+        <div class="settings-grid">
+          <label>Starting / current balance <input id="balanceInput" type="number" value="50" min="0" step="0.01"></label>
+          <label>Take profit ($) <input id="tpInput" type="number" value="0.10" min="0.01" step="0.01"></label>
+          <label>Stop loss ($) <input id="slInput" type="number" value="0.90" min="0.01" step="0.01"></label>
+          <label>Daily target ($) <input id="targetInput" type="number" value="100" min="1" step="1"></label>
+          <label>Virtual $ per $1 price move <input id="scaleInput" type="number" value="1" min="0.01" step="0.01"></label>
+          <label>Execution timeframe <select id="tfInput"><option value="1min">1 minute</option><option value="5min">5 minutes</option></select></label>
+        </div>
+        <div class="toggle-row"><div><b>Auto paper mode</b><small>Automatically simulate rule-qualified signals; never sends broker orders.</small></div><label class="switch"><input type="checkbox" id="autoMode"><span></span></label></div>
+        <div class="toggle-row"><div><b>Liquidity dual-side simulation</b><small>On a long-wick candle, record both BUY and SELL paper positions.</small></div><label class="switch"><input type="checkbox" id="liquidityMode"><span></span></label></div>
+        <div class="button-row"><button class="btn primary" id="startBot">Start paper bot</button><button class="btn secondary" id="stopBot">Pause</button><button class="btn secondary" id="paperTrade">Paper trade signal</button></div>
+        <p class="tiny">Simulator P&amp;L uses the virtual price-move multiplier above. It is not broker-accurate until calibrated to your instrument's contract size, lot size, spread and fees. A dual-side trade can lose on both sides.</p>
+      </div>
+      <div class="panel" id="research">
+        <div class="panel-head"><div><div class="eyebrow">GOLD RESEARCH</div><h2>News & AI analyst</h2></div><button class="text-btn" id="loadNews">Refresh news ↻</button></div>
+        <div id="newsList" class="news-list"><div class="empty">Loading gold / market headlines…</div></div>
+        <div class="ai-box"><div class="ai-head"><b>AI market briefing</b><span id="aiProvider">API optional</span></div><p id="aiAnswer">Ask the configured AI to compare headlines with the current SMA context. AI output is commentary, not a trade command.</p><button class="btn secondary full" id="askAI">Generate AI briefing</button></div>
+      </div>
+    </section>
+    <section class="panel journal" id="journal">
+      <div class="panel-head"><div><div class="eyebrow">PERFORMANCE & MEMORY</div><h2>Trade journal</h2></div><div class="head-actions"><button class="text-btn" id="exportCsv">Export CSV ↓</button><button class="text-btn danger-text" id="clearHistory">Clear history</button></div></div>
+      <div class="journal-stats"><div><small>TOTAL TRADES</small><b id="totalTrades">0</b></div><div><small>WINS</small><b id="wins">0</b></div><div><small>LOSSES</small><b id="losses">0</b></div><div><small>NET P&amp;L</small><b id="netPnl">$0.00</b></div></div>
+      <div class="table-wrap"><table><thead><tr><th>TIME</th><th>SIDE</th><th>ENTRY</th><th>EXIT</th><th>RESULT</th><th>REASON</th></tr></thead><tbody id="tradeRows"><tr><td colspan="6" class="empty">No paper trades yet.</td></tr></tbody></table></div>
+      <div class="learning"><div><div class="eyebrow">LEARNING ENGINE</div><b>Periodic performance review</b><p id="learningText">After every 4 closed paper trades, the dashboard reviews win rate, side performance and recurring signal conditions. It stores observations only; it never silently changes your strategy or risk settings.</p></div><span class="learning-icon">✳</span></div>
+    </section>
+    <footer>RK GOLD AI SCALPER · PAPER TRADING ONLY · API keys stay on your local backend</footer>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="/static/app.js"></script>
+</body></html>
